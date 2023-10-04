@@ -1,0 +1,688 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>Picking a vector database: a comparison and guide for 2023</title><style>
+/* cspell:disable-file */
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 3px;
+	padding: 1rem;
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.column-list {
+	display: flex;
+	justify-content: space-between;
+}
+
+.column {
+	padding: 0 1em;
+}
+
+.column:first-child {
+	padding-left: 0;
+}
+
+.column:last-child {
+	padding-right: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding: 0.125rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+	border-collapse: collapse;
+}
+
+table {
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	padding-inline-start: 0;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+.page-description {
+    margin-bottom: 2em;
+}
+
+.simple-table {
+	margin-top: 1em;
+	font-size: 0.875rem;
+	empty-cells: show;
+}
+.simple-table td {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table th {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table-header-color {
+	background: rgb(247, 246, 243);
+	color: black;
+}
+.simple-table-header {
+	font-weight: 500;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-block;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	max-height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	transform: scale(1.5);
+	margin-right: 0.6em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code-wrap {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1.25em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+.bookmark {
+	text-decoration: none;
+	max-height: 8em;
+	padding: 0;
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+}
+
+.bookmark-title {
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 1.75em;
+	white-space: nowrap;
+}
+
+.bookmark-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.bookmark-info {
+	flex: 4 1 180px;
+	padding: 12px 14px 14px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.bookmark-image {
+	width: 33%;
+	flex: 1 1 180px;
+	display: block;
+	position: relative;
+	object-fit: cover;
+	border-radius: 1px;
+}
+
+.bookmark-description {
+	color: rgba(55, 53, 47, 0.6);
+	font-size: 0.75em;
+	overflow: hidden;
+	max-height: 4.5em;
+	word-break: break-word;
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	margin-top: 0.25em;
+}
+
+.sans { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, ui-serif, serif; }
+.mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
+.pdf .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK JP'; }
+.pdf:lang(zh-CN) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC'; }
+.pdf:lang(zh-TW) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK TC'; }
+.pdf:lang(ko-KR) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK KR'; }
+.pdf .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK JP'; }
+.pdf:lang(zh-CN) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK SC'; }
+.pdf:lang(zh-TW) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK TC'; }
+.pdf:lang(ko-KR) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK KR'; }
+.pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.highlight-default {
+	color: rgba(55, 53, 47, 1);
+}
+.highlight-gray {
+	color: rgba(120, 119, 116, 1);
+	fill: rgba(120, 119, 116, 1);
+}
+.highlight-brown {
+	color: rgba(159, 107, 83, 1);
+	fill: rgba(159, 107, 83, 1);
+}
+.highlight-orange {
+	color: rgba(217, 115, 13, 1);
+	fill: rgba(217, 115, 13, 1);
+}
+.highlight-yellow {
+	color: rgba(203, 145, 47, 1);
+	fill: rgba(203, 145, 47, 1);
+}
+.highlight-teal {
+	color: rgba(68, 131, 97, 1);
+	fill: rgba(68, 131, 97, 1);
+}
+.highlight-blue {
+	color: rgba(51, 126, 169, 1);
+	fill: rgba(51, 126, 169, 1);
+}
+.highlight-purple {
+	color: rgba(144, 101, 176, 1);
+	fill: rgba(144, 101, 176, 1);
+}
+.highlight-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.highlight-red {
+	color: rgba(212, 76, 71, 1);
+	fill: rgba(212, 76, 71, 1);
+}
+.highlight-gray_background {
+	background: rgba(241, 241, 239, 1);
+}
+.highlight-brown_background {
+	background: rgba(244, 238, 238, 1);
+}
+.highlight-orange_background {
+	background: rgba(251, 236, 221, 1);
+}
+.highlight-yellow_background {
+	background: rgba(251, 243, 219, 1);
+}
+.highlight-teal_background {
+	background: rgba(237, 243, 236, 1);
+}
+.highlight-blue_background {
+	background: rgba(231, 243, 248, 1);
+}
+.highlight-purple_background {
+	background: rgba(244, 240, 247, 0.8);
+}
+.highlight-pink_background {
+	background: rgba(249, 238, 243, 0.8);
+}
+.highlight-red_background {
+	background: rgba(253, 235, 236, 1);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(120, 119, 116, 1);
+	fill: rgba(120, 119, 116, 1);
+}
+.block-color-brown {
+	color: rgba(159, 107, 83, 1);
+	fill: rgba(159, 107, 83, 1);
+}
+.block-color-orange {
+	color: rgba(217, 115, 13, 1);
+	fill: rgba(217, 115, 13, 1);
+}
+.block-color-yellow {
+	color: rgba(203, 145, 47, 1);
+	fill: rgba(203, 145, 47, 1);
+}
+.block-color-teal {
+	color: rgba(68, 131, 97, 1);
+	fill: rgba(68, 131, 97, 1);
+}
+.block-color-blue {
+	color: rgba(51, 126, 169, 1);
+	fill: rgba(51, 126, 169, 1);
+}
+.block-color-purple {
+	color: rgba(144, 101, 176, 1);
+	fill: rgba(144, 101, 176, 1);
+}
+.block-color-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.block-color-red {
+	color: rgba(212, 76, 71, 1);
+	fill: rgba(212, 76, 71, 1);
+}
+.block-color-gray_background {
+	background: rgba(241, 241, 239, 1);
+}
+.block-color-brown_background {
+	background: rgba(244, 238, 238, 1);
+}
+.block-color-orange_background {
+	background: rgba(251, 236, 221, 1);
+}
+.block-color-yellow_background {
+	background: rgba(251, 243, 219, 1);
+}
+.block-color-teal_background {
+	background: rgba(237, 243, 236, 1);
+}
+.block-color-blue_background {
+	background: rgba(231, 243, 248, 1);
+}
+.block-color-purple_background {
+	background: rgba(244, 240, 247, 0.8);
+}
+.block-color-pink_background {
+	background: rgba(249, 238, 243, 0.8);
+}
+.block-color-red_background {
+	background: rgba(253, 235, 236, 1);
+}
+.select-value-color-interactiveBlue { background-color: rgba(35, 131, 226, .07); }
+.select-value-color-pink { background-color: rgba(245, 224, 233, 1); }
+.select-value-color-purple { background-color: rgba(232, 222, 238, 1); }
+.select-value-color-green { background-color: rgba(219, 237, 219, 1); }
+.select-value-color-gray { background-color: rgba(227, 226, 224, 1); }
+.select-value-color-translucentGray { background-color: rgba(255, 255, 255, 0.0375); }
+.select-value-color-orange { background-color: rgba(250, 222, 201, 1); }
+.select-value-color-brown { background-color: rgba(238, 224, 218, 1); }
+.select-value-color-red { background-color: rgba(255, 226, 221, 1); }
+.select-value-color-yellow { background-color: rgba(253, 236, 200, 1); }
+.select-value-color-blue { background-color: rgba(211, 229, 239, 1); }
+.select-value-color-pageGlass { background-color: undefined; }
+.select-value-color-washGlass { background-color: undefined; }
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style></head><body><article id="de4353d9-8366-47cd-a72d-83875d33082b" class="page sans"><header><h1 class="page-title">Picking a vector database: a comparison and guide for 2023</h1><p class="page-description"></p></header><div class="page-body"><p id="6ccf5879-6ab8-4cb0-97fd-7ea90de6d00b" class="">
+</p><p id="74a78110-44df-4fb2-99b0-d02b0d738b65" class="">In an era where semantic search and retrieval-augmented generation (RAG) are redefining our online interactions, the backbone supporting these advancements is often overlooked: vector databases. Think of them as the unsung heroes, holding high dimensional vectors that represent vast data, and delivering relevant ones at lightning speed. If you&#x27;re diving into applications like large language models, RAG, or any platform leveraging semantic search, you&#x27;re in the right place. </p><p id="d8d8f0d8-54f6-4f62-963b-e99a2bfc6fc7" class="">Choosing a vector database can be hard. Scalability, latency, costs, and even compliance hinge on this choice. For those navigating this terrain, I&#x27;ve embarked on a journey to sieve through the noise and compare the leading vector databases of 2023. 
+</p><p id="14d990b7-4952-4911-8875-5d83f929b275" class="">The vector databases that have been compared: Pinecone, Weviate, Milvus, Qdrant, Chroma, Elasticsearch and PGvector. The data behind the comparision comes from <a href="https://ann-benchmarks.com/">ANN Benchmarks</a>, the docs and internal benchmarks of each vector database and from digging in open source github repos.  </p><h3 id="20c9874e-9426-41e4-8b4f-6552e1e67108" class="">A comparison of leading vector databases </h3><table id="3c84713c-6aaa-419a-994a-8394da97e0ec" class="simple-table"><thead class="simple-table-header"><tr id="169c9354-a8c2-40fe-9069-fc4b90f71590"><th id="nNGs" class="simple-table-header-color simple-table-header" style="width:152px"></th><th id="vFHg" class="simple-table-header-color simple-table-header" style="width:120px"><strong>Pinecone</strong></th><th id="BzQt" class="simple-table-header-color simple-table-header"><strong>Weaviate</strong></th><th id="o:dW" class="simple-table-header-color simple-table-header"><strong>Milvus</strong></th><th id="ou&gt;Z" class="simple-table-header-color simple-table-header"><strong>Qdrant</strong></th><th id="@XWd" class="simple-table-header-color simple-table-header"><strong>Chroma</strong></th><th id="YN}c" class="simple-table-header-color simple-table-header"><strong>Elasticsearch</strong></th><th id="Dj[_" class="simple-table-header-color simple-table-header"><strong>PGvector</strong></th></tr></thead><tbody><tr id="b35c6d6a-c901-41b5-bf42-f36eaf005953"><th id="nNGs" class="simple-table-header-color simple-table-header" style="width:152px"><strong>Is open source</strong></th><td id="vFHg" class="" style="width:120px">❌</td><td id="BzQt" class="">✅</td><td id="o:dW" class="">✅</td><td id="ou&gt;Z" class="">✅</td><td id="@XWd" class="">✅</td><td id="YN}c" class="">❌</td><td id="Dj[_" class="">✅</td></tr><tr id="60f4f8d2-e897-4a67-8fae-d438028efb6e"><th id="nNGs" class="simple-table-header-color simple-table-header" style="width:152px"><strong>Self-host</strong></th><td id="vFHg" class="" style="width:120px">❌</td><td id="BzQt" class="">✅</td><td id="o:dW" class="">✅</td><td id="ou&gt;Z" class="">✅</td><td id="@XWd" class="">✅</td><td id="YN}c" class="">✅</td><td id="Dj[_" class="">✅</td></tr><tr id="cac3f7b1-0afb-4374-af6a-5a18196074b2"><th id="nNGs" class="simple-table-header-color simple-table-header" style="width:152px"><strong>Cloud management</strong></th><td id="vFHg" class="" style="width:120px">✅</td><td id="BzQt" class="">✅</td><td id="o:dW" class="">✅</td><td id="ou&gt;Z" class="">✅</td><td id="@XWd" class="">❌</td><td id="YN}c" class="">✅</td><td id="Dj[_" class="">(✔️)</td></tr><tr id="0b0da29d-10bd-4391-ab7e-90090b7df310"><th id="nNGs" class="simple-table-header-color simple-table-header" style="width:152px"><strong>Purpose-built for Vectors</strong></th><td id="vFHg" class="" style="width:120px">✅</td><td id="BzQt" class="">✅</td><td id="o:dW" class="">✅</td><td id="ou&gt;Z" class="">✅</td><td id="@XWd" class="">✅</td><td id="YN}c" class="">❌</td><td id="Dj[_" class="">❌</td></tr><tr id="f1474e0c-a949-4527-9b0a-aa3e3cb3feb6"><th id="nNGs" class="simple-table-header-color simple-table-header" style="width:152px"><strong>Developer experience</strong></th><td id="vFHg" class="" style="width:120px">👍👍👍</td><td id="BzQt" class="">👍👍</td><td id="o:dW" class="">👍👍</td><td id="ou&gt;Z" class="">👍👍</td><td id="@XWd" class="">👍👍</td><td id="YN}c" class="">👍</td><td id="Dj[_" class="">👍</td></tr><tr id="9a7e338b-94fb-49d4-845c-e8d47ce750aa"><th id="nNGs" class="simple-table-header-color simple-table-header" style="width:152px"><strong>Community</strong></th><td id="vFHg" class="" style="width:120px">Community page &amp; events</td><td id="BzQt" class="">8k☆ github,
+4k slack</td><td id="o:dW" class="">23k☆ github, 
+4k slack</td><td id="ou&gt;Z" class="">13k☆ github, 
+3k discord</td><td id="@XWd" class="">9k☆ github,
+6k discord </td><td id="YN}c" class="">23k slack</td><td id="Dj[_" class="">6k☆ github</td></tr><tr id="ac95ad72-501f-4d8b-8213-a1c77dfee4d0"><th id="nNGs" class="simple-table-header-color simple-table-header" style="width:152px"><strong>Queries per second </strong>(using text nytimes-256-angular)</th><td id="vFHg" class="" style="width:120px">150 *for p2, but more pods can be added</td><td id="BzQt" class="">791</td><td id="o:dW" class="">2406</td><td id="ou&gt;Z" class="">326</td><td id="@XWd" class="">?</td><td id="YN}c" class="">700-100 *from various reports</td><td id="Dj[_" class="">141</td></tr><tr id="e0b7d5be-c435-43cd-8b0b-2c0a852e3c2e"><th id="nNGs" class="simple-table-header-color simple-table-header" style="width:152px"><strong>Latency, ms </strong>(Recall/Percentile 95 (millis), nytimes-256-angular)</th><td id="vFHg" class="" style="width:120px">1 *batched search, 0.99 recall, 200k SBERT</td><td id="BzQt" class="">2</td><td id="o:dW" class="">1</td><td id="ou&gt;Z" class="">4</td><td id="@XWd" class="">?</td><td id="YN}c" class="">?</td><td id="Dj[_" class="">8</td></tr><tr id="758bf149-29ba-4051-8d54-998f7ee78dba"><th id="nNGs" class="simple-table-header-color simple-table-header" style="width:152px"><strong>Supported index types</strong></th><td id="vFHg" class="" style="width:120px">?</td><td id="BzQt" class="">HNSW</td><td id="o:dW" class="">Multiple (11 total)</td><td id="ou&gt;Z" class="">HNSW</td><td id="@XWd" class="">HNSW</td><td id="YN}c" class="">HNSW</td><td id="Dj[_" class="">HNSW/IVFFlat</td></tr><tr id="c2b577b2-3797-4f46-8309-8f06584b8531"><th id="nNGs" class="simple-table-header-color simple-table-header" style="width:152px"><strong>Hybrid Search (i.e. scalar filtering)</strong></th><td id="vFHg" class="" style="width:120px">✅</td><td id="BzQt" class="">✅</td><td id="o:dW" class="">✅</td><td id="ou&gt;Z" class="">✅</td><td id="@XWd" class="">✅</td><td id="YN}c" class="">✅</td><td id="Dj[_" class="">✅</td></tr><tr id="b1279583-4e73-418b-b65f-e2be09e1d61b"><th id="nNGs" class="simple-table-header-color simple-table-header" style="width:152px"><strong>Disk index support</strong></th><td id="vFHg" class="" style="width:120px">✅</td><td id="BzQt" class="">✅</td><td id="o:dW" class="">✅</td><td id="ou&gt;Z" class="">✅</td><td id="@XWd" class="">✅</td><td id="YN}c" class="">❌</td><td id="Dj[_" class="">✅</td></tr><tr id="40386377-8ebb-4064-aff4-947c8507e16f"><th id="nNGs" class="simple-table-header-color simple-table-header" style="width:152px"><strong>Role-based access control</strong></th><td id="vFHg" class="" style="width:120px">✅</td><td id="BzQt" class="">❌</td><td id="o:dW" class="">✅</td><td id="ou&gt;Z" class="">❌</td><td id="@XWd" class="">❌</td><td id="YN}c" class="">✅</td><td id="Dj[_" class="">❌</td></tr><tr id="0015e3a8-0580-491a-9e32-497765df41fa"><th id="nNGs" class="simple-table-header-color simple-table-header" style="width:152px"><strong>Dynamic segment placement vs. static data sharding</strong></th><td id="vFHg" class="" style="width:120px">?</td><td id="BzQt" class="">Static sharding</td><td id="o:dW" class="">Dynamic segment placement</td><td id="ou&gt;Z" class="">Static sharding</td><td id="@XWd" class="">Dynamic segment placement</td><td id="YN}c" class="">Static sharding</td><td id="Dj[_" class="">-</td></tr><tr id="6c935e74-d774-4921-8ade-b621c38efb9d"><th id="nNGs" class="simple-table-header-color simple-table-header" style="width:152px"><strong>Free hosted tier</strong></th><td id="vFHg" class="" style="width:120px">✅</td><td id="BzQt" class="">✅</td><td id="o:dW" class="">✅</td><td id="ou&gt;Z" class="">(free self-hosted)</td><td id="@XWd" class="">(free self-hosted)</td><td id="YN}c" class="">(free self-hosted)</td><td id="Dj[_" class="">(varies)</td></tr><tr id="ed82c275-cc6f-48da-b293-f45b04bfed75"><th id="nNGs" class="simple-table-header-color simple-table-header" style="width:152px"><strong>Pricing (50k vectors @1536)</strong></th><td id="vFHg" class="" style="width:120px">$70</td><td id="BzQt" class="">fr. $25</td><td id="o:dW" class="">fr. $65</td><td id="ou&gt;Z" class="">est. $9</td><td id="@XWd" class="">Varies</td><td id="YN}c" class="">$95</td><td id="Dj[_" class="">Varies</td></tr><tr id="af0cd5f6-c59b-410e-96f9-78696ba9147d"><th id="nNGs" class="simple-table-header-color simple-table-header" style="width:152px"><strong>Pricing (20M vectors, 20M req. @768)</strong></th><td id="vFHg" class="" style="width:120px">$227 
+($2074 for high performance)</td><td id="BzQt" class="">$1536</td><td id="o:dW" class="">fr. $309 ($2291 for high performance)</td><td id="ou&gt;Z" class="">fr. $281 
+($820 for high performance)</td><td id="@XWd" class="">Varies</td><td id="YN}c" class="">est. $1225</td><td id="Dj[_" class="">Varies</td></tr></tbody></table><p id="b710389b-7da7-4b13-b798-2edfee073b63" class="">Navigating the terrain of vector databases in 2023 reveals a diverse array of options each catering to different needs. The comparison table paints a clear picture, but here&#x27;s a succinct summary to aid your decision:</p><ol type="1" id="1728bf5b-729e-4f2c-98b0-c759d529c833" class="numbered-list" start="1"><li><strong>Open-Source and hosted cloud</strong>: If you lean towards open-source solutions, Weviate, Milvus, and Chroma emerge as top contenders. Pinecone, although not open-source, shines with its developer experience and a robust fully hosted solution.</li></ol><ol type="1" id="6a58dcea-f5c8-4f69-bcc7-a746d609ffee" class="numbered-list" start="2"><li><strong>Performance</strong>: When it comes to raw performance in queries per second, Milvus takes the lead, closely followed by Weviate and Qdrant. However, in terms of latency, Pinecone and Milvus both offer impressive sub-2ms results. If nmultiple pods are added for pinecone, then much higher QPS can be reached.</li></ol><ol type="1" id="95dd7e5d-e4e1-4eb4-a789-474f02f2d67f" class="numbered-list" start="3"><li><strong>Community Strength</strong>: Milvus boasts the largest community presence, followed by Weviate and Elasticsearch. A strong community often translates to better support, enhancements, and bug fixes.</li></ol><ol type="1" id="6bb96afe-e354-45ba-ba2a-b31e335e6548" class="numbered-list" start="4"><li><strong>Scalability, advanced features and security</strong>: Role-based access control, a feature crucial for many enterprise applications, is found in Pinecone, Milvus, and Elasticsearch. On the scaling front, dynamic segment placement is offered by Milvus and Chroma, making them suitable for ever-evolving datasets. If you&#x27;re in need of a database with a wide array of index types, Milvus&#x27; support for 11 different types is unmatched. While hybrid search is well-supported across the board, Elasticsearch does fall short in terms of disk index support.</li></ol><ol type="1" id="f2b159c7-6745-4bd3-9e7b-31ba3874f0b6" class="numbered-list" start="5"><li><strong>Pricing</strong>: For startups or projects on a budget, Qdrant&#x27;s estimated $9 pricing for 50k vectors is hard to beat. On the other end of the spectrum, for larger projects requiring high performance, Pinecone and Milvus offer competitive pricing tiers.</li></ol><p id="3f8474c0-f2a0-4738-a21a-20b8a24fc37b" class="">
+</p><p id="1d3a42fe-e069-402e-87e7-01c2ba17ad45" class="">In conclusion, there&#x27;s no one-size-fits-all when it comes to vector databases. The ideal choice varies based on specific project needs, budget constraints, and personal preferences. This guide offers a comprehensive lens to view the top vector databases of 2023, hoping to simplify the decision-making process for developers. My choice? I’m testing out Pinecone and Milvus in the wild, mostly because of their high performance, Milvus strong community and price flexibility at scale. </p><p id="4593e23a-5cb1-48da-91e7-79ba57e62bf6" class="">
+</p><h3 id="b246a637-5b33-4a08-ad78-6e5938cfa981" class=""><strong>Sources</strong></h3><p id="ecea37e4-2601-4d65-a6fd-ffffce91b970" class=""><a href="https://www.kdnuggets.com/2023/06/vector-databases-important-llms.html">https://www.kdnuggets.com/2023/06/vector-databases-important-llms.html</a></p><p id="44fea186-7eb3-4858-b955-6e0563cab938" class=""><a href="https://ann-benchmarks.com/">https://ann-benchmarks.com/</a></p><p id="7730c793-3f67-4789-b2f8-983a32389758" class=""><a href="https://qdrant.tech/benchmarks/">https://qdrant.tech/benchmarks/</a></p><p id="df154325-0cae-466d-81c3-122458fcd5d1" class=""><a href="https://zilliz.com/comparison">https://zilliz.com/comparison</a></p><p id="61ce5326-5818-4479-8275-876840d346b8" class="">Github and docs for each vector database</p><p id="b144bc15-0ccb-4828-bcd4-888c295a20f9" class="">
+</p><h3 id="f8d88d5d-6d0c-4711-93a2-0e69f32cbfe7" class=""><strong>Appendix 1: explination of comparision parameters</strong></h3><ul id="24c84c88-acfb-464c-b824-874f61408a7f" class="bulleted-list"><li style="list-style-type:disc"><strong>Is open source</strong>: Indicates if the software&#x27;s source code is freely available to the public, allowing developers to review, modify, and distribute the software.</li></ul><ul id="48143b61-8d26-4ccc-bfb8-7010d1031bdb" class="bulleted-list"><li style="list-style-type:disc"><strong>Self-host</strong>: Specifies if the database can be hosted on a user&#x27;s own infrastructure rather than being dependent on a third-party cloud service.</li></ul><ul id="4529dea4-5eac-4949-864f-08655176333c" class="bulleted-list"><li style="list-style-type:disc"><strong>Cloud management</strong>: Offers an interface for database cloud management</li></ul><ul id="5834a797-c66b-4611-a195-a9d1676f3143" class="bulleted-list"><li style="list-style-type:disc"><strong>Purpose-built for Vectors</strong>: This means the database was specifically designed with vector storage and retrieval in mind, rather than being a general database with added vector capabilities.</li></ul><ul id="a77b3335-5a45-41a5-ae06-aff16db59d24" class="bulleted-list"><li style="list-style-type:disc"><strong>Developer experience</strong>: Evaluates how user-friendly and intuitive it is for developers to work with the database, considering aspects like documentation, SDKs, and API design.</li></ul><ul id="a92f3077-9d81-4d91-95b5-b9d5daa45c8d" class="bulleted-list"><li style="list-style-type:disc"><strong>Community</strong>: Assesses the size and activity of the developer community around the database. A strong community often indicates good support, contributions, and the potential for continued development.</li></ul><ul id="d6acfaa6-137c-4c6c-94dc-f6df24ad536a" class="bulleted-list"><li style="list-style-type:disc"><strong>Queries per second</strong>: How many queries the database can handle per second using a specific dataset for benchmarking (in this case, the nytimes-256-angular dataset)</li></ul><ul id="874bab59-840d-475d-9911-dc63347575f6" class="bulleted-list"><li style="list-style-type:disc"><strong>Latency</strong>: the delay (in milliseconds) between initiating a request and receiving a response. 95% of query latencies fall under the specified time for the nytimes-256-angular dataset.</li></ul><ul id="d39c02fc-38cc-446c-8f35-c327ad484ab3" class="bulleted-list"><li style="list-style-type:disc"><strong>Supported index types</strong>: Refers to the various indexing techniques the database supports, which can influence search speed and accuracy. Some vector databases may support multiple indexing types like HNSW, IVF, and more.</li></ul><ul id="b894f892-a03f-4cd2-833c-305022e186f0" class="bulleted-list"><li style="list-style-type:disc"><strong>Hybrid Search</strong>: Determines if the database allows for combining traditional (scalar) queries with vector queries. This can be crucial for applications that need to filter results based on non-vector criteria.</li></ul><ul id="5aec0472-af96-4b5f-98f1-9d88e4c4439b" class="bulleted-list"><li style="list-style-type:disc"><strong>Disk index support</strong>: Indicates if the database supports storing indexes on disk. This is essential for handling large datasets that cannot fit into memory.</li></ul><ul id="7b1e142f-1e65-44cc-99f4-5e3cdb7d5370" class="bulleted-list"><li style="list-style-type:disc"><strong>Role-based access control</strong>: Checks if the database has security mechanisms that allow permissions to be granted to specific roles or users, enhancing data security.</li></ul><ul id="e621d119-a87a-4025-8f62-96b3a7d9b43a" class="bulleted-list"><li style="list-style-type:disc"><strong>Dynamic segment placement vs. static data sharding</strong>: Refers to how the database manages data distribution and scaling. Dynamic segment placement allows for more flexible data distribution based on real-time needs, while static data sharding divides data into predetermined segments.</li></ul><ul id="096c5ce1-2922-4b66-8388-3ef8ebef5e21" class="bulleted-list"><li style="list-style-type:disc"><strong>Free hosted tier</strong>: Specifies if the database provider offers a free cloud-hosted version, allowing users to test or use the database without initial investment.</li></ul><ul id="e823bdcb-80ce-4f4f-b76d-117bfbee8475" class="bulleted-list"><li style="list-style-type:disc"><strong>Pricing (50k vectors @1536)</strong> and <strong>Pricing (20M vectors, 20M req. @768)</strong>: Provides information on the cost associated with storing and querying specific amounts of data, giving an insight into the database&#x27;s cost-effectiveness for both small and large-scale use cases.</li></ul><p id="a57aed78-39ae-4e2d-bfee-62bad72fae21" class="">
+</p></div></article></body></html>
